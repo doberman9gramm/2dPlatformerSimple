@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class SkeletonAnimation : MonoBehaviour
 {
+    [SerializeField] private Skeleton _skeleton; 
+
     private Animator _animator;
 
     private const string Idle = nameof(Idle);
@@ -15,23 +17,23 @@ public class SkeletonAnimation : MonoBehaviour
 
     private void OnEnable()
     {
-        Enemy.onNewState += ChangeAnimation;
+        _skeleton.OnCurrentState += ChangeAnimation;
     }
 
     private void OnDisable()
     {
-        Enemy.onNewState -= ChangeAnimation;
+        _skeleton.OnCurrentState -= ChangeAnimation;
     }
 
-    private void ChangeAnimation(Enemy.State newState)
+    private void ChangeAnimation(Skeleton.State newState)
     {
         switch (newState)
         {
-            case Enemy.State.Idle:
+            case Skeleton.State.Idle:
                 _animator.Play(Idle);
                 break;
 
-            case Enemy.State.Walk:
+            case Skeleton.State.Walk:
                 _animator.Play(Walk);
                 break;
         }

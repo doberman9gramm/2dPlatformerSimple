@@ -9,51 +9,47 @@ public class Chest : MonoBehaviour
     [SerializeField] private List<GameObject> _itemsInChest;
 
     private Animator _animator;
-    private bool _playerInTrigger;
     private bool _isOpening;
+
+    private const string isOpen = nameof(isOpen);
+
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+    }
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
         _pressAction.enabled = false;
         _isOpening = false;
-        _animator.SetBool("isOpen", _isOpening);
-    }
-
-    private void OnEnable()
-    {
-        PlayerMovement.onNewState += OpenChest;
-    }
-
-    private void OnDisable()
-    {
-        PlayerMovement.onNewState -= OpenChest;
+        _animator.SetBool(isOpen, _isOpening);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent(typeof(PlayerMovement), out Component component) && _pressAction != null)
-        {
             _pressAction.enabled = true;
-            _playerInTrigger = true;
-        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(typeof(PlayerMovement), out Component component) && _pressAction != null)
+            if (Input.GetKey("e"))
+                OpenChest();
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent(typeof(PlayerMovement), out Component component) && _pressAction != null)
-        {
             _pressAction.enabled = false;
-            _playerInTrigger = false;
-        }
     }
 
-    private void OpenChest(PlayerMovement.playerState state)
+    private void OpenChest()
     {
-        if (_playerInTrigger && _isOpening  == false && state == PlayerMovement.playerState.Action)
+        if (_isOpening  == false)
         {
             _isOpening = true;
-            _animator.SetBool("isOpen", _isOpening);
+            _animator.SetBool(isOpen, _isOpening);
             Destroy(_pressAction);
 
             foreach (var itemInChest in _itemsInChest)

@@ -16,6 +16,6 @@ public class GroundCheck : MonoBehaviour
     private bool CheckGround()
     {
         var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, _distancetoGround, LayerMask.GetMask("Ground"));
-        return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
+        return groundCheck.collider != null && groundCheck.transform.gameObject.TryGetComponent(typeof(Ground), out Component component);
     }
 }

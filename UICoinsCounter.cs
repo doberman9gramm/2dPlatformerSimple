@@ -5,21 +5,21 @@ using UnityEngine.UI;
 public class UICoinsCounter : MonoBehaviour
 {
     private Text _counter;
-    private int _coins;
+    private int _coins = 0;
 
-    private void Start()
+    private void Awake()
     {
-        _coins = 0;
         _counter = GetComponent<Text>();
     }
+
     private void OnEnable()
     {
-        Coin.PickUpCoin += AddCoin;
+        Coin.CoinCollecting += AddCoin;
     }
 
     private void OnDisable()
     {
-        Coin.PickUpCoin -= AddCoin;
+        Coin.CoinCollecting -= AddCoin;
     }
 
     private void AddCoin()

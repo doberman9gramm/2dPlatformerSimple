@@ -1,47 +1,49 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Animator), typeof(PlayerMovement))]
 public class PlayerAnimator : MonoBehaviour
 {
     private Animator _animator;
+    private PlayerMovement _playerMovement;
 
     private const string Idle = nameof(Idle);
     private const string Run = nameof(Run);
     private const string Jump = nameof(Jump);
     private const string Fall = nameof(Fall);
 
-    private void Start()
+    private void Awake()
     {
+        _playerMovement = GetComponent<PlayerMovement>();
         _animator = GetComponent<Animator>();
     }
 
     private void OnEnable()
     {
-        PlayerMovement.onNewState += ChangeAnimation;
+        _playerMovement.OnState += ChangeAnimation;
     }
 
     private void OnDisable()
     {
-        PlayerMovement.onNewState -= ChangeAnimation;
+        _playerMovement.OnState -= ChangeAnimation;
     }
 
-    private void ChangeAnimation(PlayerMovement.playerState state)
+    private void ChangeAnimation(PlayerMovement.PlayerState state)
     {
         switch (state)
         {
-            case PlayerMovement.playerState.Idle:
+            case PlayerMovement.PlayerState.Idle:
                 _animator.Play(Idle);
                 break;
 
-            case PlayerMovement.playerState.Run:
+            case PlayerMovement.PlayerState.Run:
                 _animator.Play(Run);
                 break;
 
-            case PlayerMovement.playerState.Jump:
+            case PlayerMovement.PlayerState.Jump:
                 _animator.Play(Jump);
                 break;
 
-            case PlayerMovement.playerState.Fall:
+            case PlayerMovement.PlayerState.Fall:
                 _animator.Play(Fall);
                 break; 
         }

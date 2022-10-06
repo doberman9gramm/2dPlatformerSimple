@@ -1,38 +1,45 @@
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource), typeof(Skeleton))]
 public class SkeletonAudioSource : MonoBehaviour
 {
     [SerializeField] private AudioClip _skeletonWalk;
-    
+
+    private Skeleton _skeleton;
     private AudioSource _audioSource;
+
+    private void Awake()
+    {
+        _skeleton = GetComponent<Skeleton>();
+        _audioSource = GetComponent<AudioSource>();
+
+    }
 
     private void Start()
     {
-        _audioSource = GetComponent<AudioSource>();
         _audioSource.clip = _skeletonWalk;
         _audioSource.loop = true;
     }
 
     private void OnEnable()
     {
-        Enemy.onNewState += ChangeAudio;
+        _skeleton.OnCurrentState += ChangeAudio; 
     }
 
     private void OnDisable()
     {
-        Enemy.onNewState -= ChangeAudio;
+        _skeleton.OnCurrentState -= ChangeAudio;
     }
-
-    private void ChangeAudio(Enemy.State newState)
+    
+    private void ChangeAudio(Skeleton.State newState)
     {
         switch (newState)
         {
-            case Enemy.State.Idle:
+            case Skeleton.State.Idle:
                 _audioSource.Stop();
                 break;
 
-            case Enemy.State.Walk:
+            case Skeleton.State.Walk:
                 _audioSource.Play();
                 break;
         }

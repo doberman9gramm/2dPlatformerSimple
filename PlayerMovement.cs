@@ -4,17 +4,19 @@ using System;
 [RequireComponent(typeof(Rigidbody2D), typeof(GroundCheck))]
 public class PlayerMovement : MonoBehaviour
 {
-    public static Action<playerState> onNewState;
+    public Action<PlayerState> OnState;
 
     [SerializeField] private float playerSpeed = 5.0f;
     [SerializeField] private float jumpPower = 5.0f;
     
     private GroundCheck _groundCheck;
     private Rigidbody2D _playerRigidbody;
-    private playerState _playerState;
+    private PlayerState _playerState;
     private static float _horozintalValue;
 
-    public enum playerState
+    public PlayerState CurrentState => _playerState;
+
+    public enum PlayerState
     {
         Idle,
         Run,
@@ -25,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float HorozintalValue => _horozintalValue;
 
-    private void Start()
+    private void Awake()
     {
         _groundCheck = GetComponent<GroundCheck>();
         _playerRigidbody = GetComponent<Rigidbody2D>();
@@ -49,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
             _playerRigidbody.velocity = new Vector2(_horozintalValue * playerSpeed, _playerRigidbody.velocity.y);
 
             if (_groundCheck.IsGrounded)
-                onNewState?.Invoke(_playerState = playerState.Run);
+                OnState?.Invoke(_playerState = PlayerState.Run);
         }
     }
 
@@ -58,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton("Jump") && _groundCheck.IsGrounded)
         {
             _playerRigidbody.velocity = new Vector2(0, jumpPower);
-            onNewState?.Invoke(_playerState = playerState.Jump);
+            OnState?.Invoke(_playerState = PlayerState.Jump);
         }
     }
 
@@ -67,21 +69,21 @@ public class PlayerMovement : MonoBehaviour
         if (Input.anyKey == false && _groundCheck.IsGrounded)
         {
             _playerRigidbody.velocity = Vector2.zero;
-            onNewState?.Invoke(_playerState = playerState.Idle);
+            OnState?.Invoke(_playerState = PlayerState.Idle);
         }
     }
 
     private void Fall()
     {
-        if (_groundCheck.IsGrounded == false && _playerState != playerState.Jump)
+        if (_groundCheck.IsGrounded == false && _playerState != PlayerState.Jump)
         {
-            onNewState?.Invoke(_playerState = playerState.Fall);
+            OnState?.Invoke(_playerState = PlayerState.Fall);
         }
     }
 
     private void Action()
     {
         if (Input.GetKey("e") && _groundCheck.IsGrounded)
-            onNewState?.Invoke(_playerState = playerState.Action);
+            OnState?.Invoke(_playerState = PlayerState.Action);
     }
 }

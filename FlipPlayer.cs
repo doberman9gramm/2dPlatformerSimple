@@ -1,12 +1,12 @@
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer), typeof(PlayerMovement))]
 public class FlipPlayer : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
     private PlayerMovement _playerMovement;
 
-    private void Start()
+    private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _playerMovement = GetComponent<PlayerMovement>();
